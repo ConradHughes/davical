@@ -7,9 +7,9 @@
 #---------------------------------------------------------------------
 
 FROM 	alpine
-MAINTAINER https://github.com/datze 
+MAINTAINER https://github.com/Elrondo46 
 
-ENV	TIME_ZONE "Europe/Rome"
+ENV	TIME_ZONE "Europe/Paris"
 ENV	HOST_NAME "davical.example"
 ENV     LANG      "en_US.UTF-8"
 ENV     DAVICAL_LANG "en_US"

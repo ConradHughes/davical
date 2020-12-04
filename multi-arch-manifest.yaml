@@ -1,0 +1,21 @@
+image: tuxnvape/davical-https:latest
+manifests:
+  - image: tuxnvape/davical-https:latest:amd64
+    platform:
+      architecture: amd64
+      os: linux
+  - image: tuxnvape/davical-https:arm32v5
+    platform:
+      architecture: arm
+      os: linux
+      variant: v5
+  - image: tuxnvape/davical-https:arm32v7
+    platform:
+      architecture: arm
+      os: linux
+      variant: v7
+  - image: tuxnvape/davical-https:arm64v8
+    platform:
+      architecture: arm64
+      os: linux
+      variant: v8
