@@ -11,6 +11,8 @@ MAINTAINER https://github.com/datze
 
 ENV	TIME_ZONE "Europe/Rome"
 ENV	HOST_NAME "davical.example"
+ENV     LANG      "en_US.UTF-8"
+ENV     DAVICAL_LANG "en_US"
 
 # config files, shell scripts
 COPY 	initialize_db.sh /sbin/initialize_db.sh
@@ -21,6 +23,18 @@ COPY	apache.conf /config/apache.conf
 COPY	davical.php /config/davical.php
 COPY	supervisord.conf /config/supervisord.conf
 COPY	rsyslog.conf /config/rsyslog.conf
+
+ENV MUSL_LOCALE_DEPS cmake make musl-dev gcc gettext-dev libintl
+ENV MUSL_LOCPATH /usr/share/i18n/locales/musl
+
+RUN apk add --no-cache \
+    $MUSL_LOCALE_DEPS \
+    && wget https://gitlab.com/rilian-la-te/musl-locales/-/archive/master/musl-locales-master.zip \
+    && unzip musl-locales-master.zip \
+      && cd musl-locales-master \
+      && cmake -DLOCALE_PROFILE=OFF -D CMAKE_INSTALL_PREFIX:PATH=/usr . && make && make install \
+      && cd .. && rm -r musl-locales-master
+
 
 # apk
 RUN	apk --update add \
@@ -35,6 +49,7 @@ RUN	apk --update add \
 	apache2-utils \
 	apache2-ssl \
 	php7 \
+        php7-session \
 	php7-apache2 \
 	php7-pgsql \
 	php7-imap \
@@ -51,9 +66,10 @@ RUN	apk --update add \
 	perl-yaml \
 	perl-dbd-pg \
 	perl-dbi \
+        wget \
 	git \
-# git
-	&& git clone https://gitlab.com/davical-project/awl.git /usr/share/awl/ \
+
+        && git clone https://gitlab.com/davical-project/awl.git /usr/share/awl/ \
 	&& git clone https://gitlab.com/davical-project/davical.git /usr/share/davical/ \
 	&& rm -rf /usr/share/davical/.git /usr/share/awl/.git/ \
 	&& apk del git \
@@ -100,6 +116,7 @@ RUN	apk --update add \
  	&& mkdir -p /run/apache2 \
 	&& mkdir /run/postgresql \
 	&& chmod a+w /run/postgresql
+
 
 EXPOSE 80 443
 VOLUME 	["/var/lib/postgresql/data/","/config"]

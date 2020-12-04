@@ -147,11 +147,14 @@ $c->default_privileges = array('all');
 * values when the users are created.
 * Default: none
 */
-$c->template_usr = array( 'active' => true,
-                          'locale' => 'en_EN',
-                           'date_format_type' => 'E',
-                           'email_ok' => date('Y-m-d')
-                         );
+
+/**
+*$c->template_usr = array( 'active' => true,
+*                          'locale' => 'en_EN',
+*                           'date_format_type' => 'E',
+*                           'email_ok' => date('Y-m-d')
+*                         );
+*/
 
 /**
 * If true, then remote scheduling will be enabled.  There is a possibility 
@@ -384,7 +387,7 @@ $c->template_usr = array( 'active' => true,
 * People interested in providing new translations are directed to the Wiki:
 *   http://wiki.davical.org/w/Translating_DAViCal
 */
-$c->default_locale = "it_IT";
+$c->default_locale = getenv("DAVICAL_LANG")?:'en_US;
 
 /**
 * Default will be $_SERVER['SERVER_NAME'];

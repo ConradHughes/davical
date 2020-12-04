@@ -22,7 +22,7 @@ chmod u+rwx,g+rx /config/davical.php
 #SET THE DATABASE ONLY AT THE FIRST RUN
 chown -R postgres:postgres /var/lib/postgresql
 if [ ! -e /var/lib/postgresql/data/pg_hba.conf ]; then
-	su - postgres -c "initdb -D data"
+	su - postgres -c "initdb -D data --locale=$LANG"
 	echo "listen_addresses='*'" >> /var/lib/postgresql/data/postgresql.conf
 	echo "log_destination = 'syslog'" >> /var/lib/postgresql/data/postgresql.conf
 	echo "syslog_facility = 'LOCAL1'" >> /var/lib/postgresql/data/postgresql.conf
