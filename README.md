@@ -22,6 +22,8 @@ List of supported clients: Mozilla Thunderbird/Lightning, Evolution, Mulberry, C
 - Exposed Volumes: /config and /var/lib/postgresql/data/
 - Exposed Variables: TIME_ZONE and HOST_NAME and Locales (LC_ALL, LANG). There is a bug with DAVICAL_LANG for lang interface, I will fix it soon. Postgres keeps the language you choose.
 
+### Multi Architecture Support
+You can use it in ARM, ARM64 and AMD64
 
 For other details go to the README of the original project: https://github.com/datze/davical
 
