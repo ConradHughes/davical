@@ -20,7 +20,12 @@ List of supported clients: Mozilla Thunderbird/Lightning, Evolution, Mulberry, C
 ### Settings Added
 - Exposed Ports: TCP 80 and TCP 443
 - Exposed Volumes: /config and /var/lib/postgresql/data/
-- Exposed Variables: TIME_ZONE and HOST_NAME and Locales (LC_ALL, LANG). There is a bug with DAVICAL_LANG for lang interface, I will fix it soon. Postgres keeps the language you choose.
+- Exposed Variables: TIME_ZONE and HOST_NAME and Locales (LC_ALL, LANG). Do not forget to define LANG variable for PostgreSQL.
+
+### Multilanguage Support for Interface
+
+> DAVICAL_LANG is here for this
+> Diffrents values for languages: en, ar, de_DE, es_AR, es_ES, es_MX, es_VE, et_EE, fe_FI, fr_FR, hu_HU, it_IT, ja_JP, ko_KR, nb_NO, nl_NL, pl_PL, pt_BR, pt_PT, ru_RU, sk_SK, sv_SE
 
 ### Multi Architecture Support
 You can use it in ARM, ARM64 and AMD64
