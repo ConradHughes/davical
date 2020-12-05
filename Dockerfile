@@ -50,6 +50,8 @@ RUN     apk --update add \
         apache2-ssl \
         php7 \
         php7-session \
+        php7-intl \
+        php7-openssl \
         php7-apache2 \
         php7-pgsql \
         php7-imap \
