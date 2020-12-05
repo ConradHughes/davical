@@ -24,8 +24,8 @@ List of supported clients: Mozilla Thunderbird/Lightning, Evolution, Mulberry, C
 
 ### Multilanguage Support for Interface
 
-> DAVICAL_LANG is here for this
-> Diffrents values for languages: en, ar, de_DE, es_AR, es_ES, es_MX, es_VE, et_EE, fe_FI, fr_FR, hu_HU, it_IT, ja_JP, ko_KR, nb_NO, nl_NL, pl_PL, pt_BR, pt_PT, ru_RU, sk_SK, sv_SE
+> - DAVICAL_LANG is here for this
+> - Diffrents values for languages: en, ar, de_DE, es_AR, es_ES, es_MX, es_VE, et_EE, fe_FI, fr_FR, hu_HU, it_IT, ja_JP, ko_KR, nb_NO, nl_NL, pl_PL, pt_BR, pt_PT, ru_RU, sk_SK, sv_SE
 
 ### Multi Architecture Support
 You can use it in ARM, ARM64 and AMD64
