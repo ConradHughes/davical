@@ -100,6 +100,9 @@ RUN	apk --update add \
  	&& mkdir -p /run/apache2 \
 	&& mkdir /run/postgresql \
 	&& chmod a+w /run/postgresql
+# build-translations
+	&& cd /usr/share/davical/
+	&& make all
 
 EXPOSE 80 443
 VOLUME 	["/var/lib/postgresql/data/","/config"]
