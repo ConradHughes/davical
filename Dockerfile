@@ -13,6 +13,8 @@ ENV     TIME_ZONE "Europe/Paris"
 ENV     HOST_NAME "davical.example"
 ENV     LANG      "en_US.UTF-8"
 ENV     DAVICAL_LANG "en_US"
+ENV     PUBCERT certs/cert.pem
+ENV     PRIVKEY certs/privkey.pem
 
 # config files, shell scripts
 COPY    initialize_db.sh /sbin/initialize_db.sh
@@ -23,8 +25,8 @@ COPY    apache.conf /initial-config/apache.conf
 COPY    davical.php /initial-config/davical.php
 COPY    supervisord.conf /initial-config/supervisord.conf
 COPY    rsyslog.conf /initial-config/rsyslog.conf
-COPY    certs/cert.pem /initial-config/ssl/cert.pem
-COPY    certs/privkey.pem /initial-config/ssl/privkey.pem
+COPY    $PUBCERT /initial-config/ssl/cert.pem
+COPY    $PRIVKEY /initial-config/ssl/privkey.pem
 
 ENV MUSL_LOCALE_DEPS cmake make musl-dev gcc gettext-dev libintl
 ENV MUSL_LOCPATH /usr/share/i18n/locales/musl

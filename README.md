@@ -1,34 +1,46 @@
-# DAViCal Docker Container forked by Elrondo46
-Original Project: https://github.com/datze/davical
-Docker image for a complete [DAViCal](https://www.davical.org/) server (DAViCal + Apache2 + PostgreSQL) on Alpine Linux.
-The repository on github.org contains example configuration files for DAViCal (as well as the Dockerfile to create the Docker image).
+# DAViCal Docker container with improved configuration
 
-### About DAViCal
-[DAViCal](https://www.davical.org/) is a server for shared calendars. It implements the [CalDAV protocol](https://wikipedia.org/wiki/CalDAV) and stores calendars in the [iCalendar format](https://wikipedia.org/wiki/ICalendar).
+Docker image for a complete [DAViCal](https://www.davical.org/) server
+(DAViCal + Apache2 + PostgreSQL) on Alpine Linux, based on original work
+by [Elrondo46](https://github.com/Elrondo46/davical/) and
+[datze](https://github.com/datze/davical/).
 
-List of supported clients: Mozilla Thunderbird/Lightning, Evolution, Mulberry, Chandler, iCal, ...
+### Settings added vs original versions
 
-**Features**
->    - DAViCal is Free Software licensed under the General Public License.
->    - uses an SQL database for storage of event data
->    - supports backward-compatible access via WebDAV in read-only or read-write mode (not recommended)
->    - is committed to inter-operation with the widest possible CalDAV client software.
->
->DAViCal supports basic delegation of read/write access among calendar users, multiple users or clients reading and writing the same calendar entries over time, and scheduling of meetings with free/busy time displayed.
-(*https://www.davical.org/*)
+- Only HTTPS on port 443.
+- Tidied up volume exposure a little, including /var/log/messages too:
+  configuration, data and logs are all persisted and exposed on the
+  containing host.
+- More explicit certificate configuration.
+- Increased CPU timeout to allow for import of large (thousands of
+  entries) calendars.
+- Formalised configuration somewhat and added a Makefile for
+  convenience.  Start by creating your own version of `config.mkf` based
+  off this one:
 
-### Settings Added
-- Exposed Ports: TCP 80 and TCP 443
-- Exposed Volumes: /config and /var/lib/postgresql/data/
-- Exposed Variables: TIME_ZONE and HOST_NAME and Locales (LC_ALL, LANG). Do not forget to define LANG variable for PostgreSQL.
+        # Externally visible directory that will contain config/ (for config &
+        # certs), data/ (for DB) and log/ (reflecting /var/log).
+        local_root:=/somewhere/to/keep/these/important/files
 
-### Multilanguage Support for Interface
+        # My account on Docker
+        d_username:=DockerUsername
 
-> - DAVICAL_LANG is here for this
-> - Diffrents values for languages: en, ar, de_DE, es_AR, es_ES, es_MX, es_VE, et_EE, fe_FI, fr_FR, hu_HU, it_IT, ja_JP, ko_KR, nb_NO, nl_NL, pl_PL, pt_BR, pt_PT, ru_RU, sk_SK, sv_SE
+        # Image name on Docker and locally.
+        d_imagename:=davical
+        l_imagename:=$(d_imagename)
 
-### Multi Architecture Support
-You can use it in ARM, ARM64 and AMD64
+        # For web server & DAViCal.
+        hostname:=davical.example
+        timezone:=Europe/London
 
-For other details go to the README of the original project: https://github.com/datze/davical
+        # Web server certificates.  Here they're copied into the certs/
+        # subdirectory.
+        certs:=certs
+        pubcert:=$(certs)/cert.pem
+        privkey:=$(certs)/privkey.pem
 
+    .. then run `make build`, `make run`, etc.
+
+For further details see [Elrondo46's
+README](https://github.com/Elrondo46/davical/) and [datze's
+README](https://github.com/datze/davical/).
