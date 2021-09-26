@@ -129,6 +129,6 @@ RUN     apk --update add \
 	    && make all
 
 
-EXPOSE 80 443
+EXPOSE 443
 VOLUME  ["/var/lib/postgresql/data/","/config"]
 ENTRYPOINT ["/sbin/docker-entrypoint.sh"]
