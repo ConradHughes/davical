@@ -7,7 +7,7 @@
 #---------------------------------------------------------------------
 
 FROM    alpine
-MAINTAINER https://github.com/Elrondo46
+MAINTAINER https://github.com/ConradHughes/
 
 ENV     TIME_ZONE "Europe/Paris"
 ENV     HOST_NAME "davical.example"
