@@ -7,17 +7,27 @@ echo $TIME_ZONE > /etc/timezone
 apk del tzdata
 
 #PREPARE THE PERMISSIONS FOR VOLUMES
-mkdir 	/config
-chown -R root:root /config
-chmod -R 755 /config
-mv -n 	/apache.conf /config/apache.conf
-mv -n	/davical.php /config/davical.php
-mv -n	/supervisord.conf /config/supervisord.conf
-mv -n	/rsyslog.conf /config/rsyslog.conf
-chown -R root:root /config
-chmod -R 755 /config
-chown root:apache /config/davical.php
-chmod u+rwx,g+rx /config/davical.php
+# $icfg contains initial settings & config files.
+icfg=/initial-config
+# $mcfg should be an externally mounted directory: it'll contain
+# persistent configuration, calendar data and logs.  It's where config
+# files are moved to on first run.
+mcfg=/config
+mssl=$mcfg/ssl
+mkdir -p $mssl
+chown -R root:root $mcfg
+chmod -R 755 $mcfg
+mv -n $icfg/apache.conf $mcfg/apache.conf
+mv -n $icfg/davical.php $mcfg/davical.php
+mv -n $icfg/supervisord.conf $mcfg/supervisord.conf
+mv -n $icfg/rsyslog.conf $mcfg/rsyslog.conf
+mv -n $icfg/ssl/cert.pem $mssl/cert.pem
+mv -n $icfg/ssl/privkey.pem $mssl/privkey.pem
+#chown -R root:root /config
+#chmod -R 755 /config
+chown -R root:apache $mcfg/davical.php $mssl
+chmod u+rw,g+r $mssl/cert.pem $mssl/privkey.pem
+chmod u+rwx,g+rx $mssl $mcfg/davical.php
 
 #SET THE DATABASE ONLY AT THE FIRST RUN
 chown -R postgres:postgres /var/lib/postgresql
