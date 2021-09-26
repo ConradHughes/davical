@@ -43,5 +43,4 @@ if [ ! -e /var/lib/postgresql/data/pg_hba.conf ]; then
 fi
 
 #LAUNCH THE INIT PROCESS
-exec /usr/bin/supervisord
-
+exec /usr/bin/supervisord -c /etc/supervisord.conf
