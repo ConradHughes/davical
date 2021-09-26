@@ -19,10 +19,12 @@ COPY    initialize_db.sh /sbin/initialize_db.sh
 COPY    backup_db.sh /sbin/backup_db.sh
 COPY    docker-entrypoint.sh /sbin/docker-entrypoint.sh
 COPY    restore_db.sh /sbin/restore_db.sh
-COPY    apache.conf /config/apache.conf
-COPY    davical.php /config/davical.php
-COPY    supervisord.conf /config/supervisord.conf
-COPY    rsyslog.conf /config/rsyslog.conf
+COPY    apache.conf /initial-config/apache.conf
+COPY    davical.php /initial-config/davical.php
+COPY    supervisord.conf /initial-config/supervisord.conf
+COPY    rsyslog.conf /initial-config/rsyslog.conf
+COPY    certs/cert.pem /initial-config/ssl/cert.pem
+COPY    certs/privkey.pem /initial-config/ssl/privkey.pem
 
 ENV MUSL_LOCALE_DEPS cmake make musl-dev gcc gettext-dev libintl
 ENV MUSL_LOCPATH /usr/share/i18n/locales/musl
@@ -70,7 +72,6 @@ RUN     apk --update add \
         perl-dbi \
         wget \
         git \
-
         && git clone https://gitlab.com/davical-project/awl.git /usr/share/awl/ \
         && git clone https://gitlab.com/davical-project/davical.git /usr/share/davical/ \
         && rm -rf /usr/share/davical/.git /usr/share/awl/.git/ \
@@ -97,6 +98,8 @@ RUN     apk --update add \
         && sed -i /CustomLog/s/^/#/ /etc/apache2/conf.d/ssl.conf \
         && sed -i /ErrorLog/s/^/#/ /etc/apache2/conf.d/ssl.conf \
         && sed -i /TransferLog/s/^/#/ /etc/apache2/conf.d/ssl.conf \
+# Huge calendar imports break on PHP's 30s time limit; 300s is enough.
+        && sed -i 's/^\(max_execution_time\s*=\s*\)[0-9]\+/\1300/' /etc/php7/php.ini \
 # permissions for shell scripts and config files
         && chmod 0755 /sbin/initialize_db.sh \
         && chmod 0755 /sbin/backup_db.sh  \
@@ -106,16 +109,19 @@ RUN     apk --update add \
         && echo -e "\$IncludeConfig /etc/rsyslog.d/*.conf" > /etc/rsyslog.conf \
         && chown -R root:apache /etc/davical \
         && chmod -R u=rwx,g=rx,o= /etc/davical \
-        && chown root:apache /config/davical.php \
-        && chmod u+rwx,g+rx /config/davical.php \
+        && chown root:apache /initial-config/davical.php \
+        && chmod u+rwx,g+rx /initial-config/davical.php \
         && ln -s /config/apache.conf /etc/apache2/conf.d/davical.conf \
         && ln -s /config/davical.php /etc/davical/config.php \
         && ln -s /sbin/backup_db.sh /etc/periodic/daily/backup \
-        && ln -s /config/supervisord.conf /etc/supervisor.d/supervisord.ini \
+        && rm -f /etc/supervisord.conf \
+        && ln -s /config/supervisord.conf /etc/supervisord.conf \
         && ln -s /config/rsyslog.conf /etc/rsyslog.d/rsyslog-davical.conf \
 # clean-up etc
         && rm -rf /var/cache/apk/* \
         && mkdir -p /run/apache2 \
+        && mkdir -p /var/log/apache2 \
+        && chown -R root:apache /var/log/apache2 \
         && mkdir /run/postgresql \
         && chmod a+w /run/postgresql \
 # build-translations
