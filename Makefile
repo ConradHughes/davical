@@ -1,3 +1,6 @@
+SHELL:=/bin/bash
+SAFE_STDOUT_TO_TGT=> $@ || ( rm -f $@ ; false )
+
 include config.mkf
 ifndef local_root
 $(error Need to set local_root in config.mkf (see README.md).)
@@ -17,18 +20,21 @@ endif
 ifndef timezone
 $(error Need to set timezone in config.mkf (see README.md).)
 endif
-ifndef pubcert
-$(error Need to set pubcert in config.mkf (see README.md).)
-endif
-ifndef privkey
-$(error Need to set privkey in config.mkf (see README.md).)
+ifndef certdir
+$(error Need to set certdir in config.mkf (see README.md).)
 endif
 
+pubcert:=$(certdir)/cert.pem
 ifeq ($(wildcard $(pubcert)),)
 $(error Public certificate $(pubcert) is missing.)
 endif
+pubcert:=$(certdir)/privkey.pem
 ifeq ($(wildcard $(privkey)),)
 $(error Private key $(privkey) is missing.)
+endif
+fullchain:=$(certdir)/fullchain.pem
+ifeq ($(wildcard $(fullchain)),)
+$(error Private key $(fullchain) is missing.)
 endif
 
 all:
@@ -38,16 +44,21 @@ build:
 	docker build -t $(d_username)/$(d_imagename) .
 #	docker scan $(d_username)/$(d_imagename)
 
+# Pre-run setup, to run on docker host: make local root and install cert
+# keys.
+$(localroot):
+	mkdir -p $(addprefix $(local_root)/,config/ssl data log/apache2)
+	cp $(pubcert) $(privkey) $(fullchain) $(local_root)/config/ssl
+
+
 # Could have -p 8080:80, but I don't like HTTP.
-run:
+run: $(local_root)
 	docker run --name $(l_imagename) -p 8443:443 \
 	    -v $(local_root)/config:/config \
 	    -v $(local_root)/data:/var/lib/postgresql/data \
 	    -v $(local_root)/log:/var/log \
 	    -e HOST_NAME='$(hostname)' \
 	    -e TIME_ZONE='$(timezone)' \
-	    -e PUBCERT='$(pubcert)' \
-	    -e PRIVKEY='$(privkey)' \
 	    $(d_username)/$(d_imagename)
 
 login:
@@ -55,6 +66,11 @@ login:
 
 stop:
 	docker stop $(l_imagename)
+
+save: $(l_imagename).tar.xz
+
+$(l_imagename).tar.xz: Dockerfile
+	docker image save $(d_username)/$(d_imagename) | xz $(SAFE_STDOUT_TO_TGT)
 
 clean:
 	docker container prune # Clear up stopped containers

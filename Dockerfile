@@ -13,8 +13,6 @@ ENV     TIME_ZONE "Europe/Paris"
 ENV     HOST_NAME "davical.example"
 ENV     LANG      "en_US.UTF-8"
 ENV     DAVICAL_LANG "en_US"
-ENV     PUBCERT certs/cert.pem
-ENV     PRIVKEY certs/privkey.pem
 
 # config files, shell scripts
 COPY    initialize_db.sh /sbin/initialize_db.sh
@@ -25,8 +23,6 @@ COPY    apache.conf /initial-config/apache.conf
 COPY    davical.php /initial-config/davical.php
 COPY    supervisord.conf /initial-config/supervisord.conf
 COPY    rsyslog.conf /initial-config/rsyslog.conf
-COPY    $PUBCERT /initial-config/ssl/cert.pem
-COPY    $PRIVKEY /initial-config/ssl/privkey.pem
 
 ENV MUSL_LOCALE_DEPS cmake make musl-dev gcc gettext-dev libintl
 ENV MUSL_LOCPATH /usr/share/i18n/locales/musl
@@ -100,8 +96,8 @@ RUN     apk --update add \
         && sed -i /CustomLog/s/^/#/ /etc/apache2/conf.d/ssl.conf \
         && sed -i /ErrorLog/s/^/#/ /etc/apache2/conf.d/ssl.conf \
         && sed -i /TransferLog/s/^/#/ /etc/apache2/conf.d/ssl.conf \
-# Huge calendar imports break on PHP's 30s time limit; 300s is enough.
-        && sed -i 's/^\(max_execution_time\s*=\s*\)[0-9]\+/\1300/' /etc/php7/php.ini \
+# Huge calendar imports break on PHP's 30s time limit; 600s is enough.
+        && sed -i 's/^\(max_execution_time\s*=\s*\)[0-9]\+/\1600/' /etc/php7/php.ini \
 # permissions for shell scripts and config files
         && chmod 0755 /sbin/initialize_db.sh \
         && chmod 0755 /sbin/backup_db.sh  \
@@ -123,9 +119,10 @@ RUN     apk --update add \
         && rm -rf /var/cache/apk/* \
         && mkdir -p /run/apache2 \
         && mkdir -p /var/log/apache2 \
-        && chown -R root:apache /var/log/apache2 \
-        && mkdir /run/postgresql \
-        && chmod a+w /run/postgresql \
+        && chown root:apache /var/log/apache2 \
+        && mkdir -p /run/postgresql \
+        && chown postgres.postgres /run/postgresql \
+#       && chmod a+w /run/postgresql \
 # build-translations
 	    && cd /usr/share/davical \
 	    && make all

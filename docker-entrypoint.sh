@@ -21,12 +21,8 @@ mv -n $icfg/apache.conf $mcfg/apache.conf
 mv -n $icfg/davical.php $mcfg/davical.php
 mv -n $icfg/supervisord.conf $mcfg/supervisord.conf
 mv -n $icfg/rsyslog.conf $mcfg/rsyslog.conf
-mv -n $icfg/ssl/cert.pem $mssl/cert.pem
-mv -n $icfg/ssl/privkey.pem $mssl/privkey.pem
-#chown -R root:root /config
-#chmod -R 755 /config
 chown -R root:apache $mcfg/davical.php $mssl
-chmod u+rw,g+r $mssl/cert.pem $mssl/privkey.pem
+chmod u+rw,g+r $mssl/cert.pem $mssl/privkey.pem $mssl/fullchain.pem
 chmod u+rwx,g+rx $mssl $mcfg/davical.php
 
 #SET THE DATABASE ONLY AT THE FIRST RUN

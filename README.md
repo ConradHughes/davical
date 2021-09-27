@@ -20,7 +20,7 @@ by [Elrondo46](https://github.com/Elrondo46/davical/) and
 
         # Externally visible directory that will contain config/ (for config &
         # certs), data/ (for DB) and log/ (reflecting /var/log).
-        local_root:=/somewhere/to/keep/these/important/files
+        local_root:=/var/run/davical-docker
 
         # My account on Docker
         d_username:=DockerUsername
@@ -33,11 +33,8 @@ by [Elrondo46](https://github.com/Elrondo46/davical/) and
         hostname:=davical.example
         timezone:=Europe/London
 
-        # Web server certificates.  Here they're copied into the certs/
-        # subdirectory.
-        certs:=certs
-        pubcert:=$(certs)/cert.pem
-        privkey:=$(certs)/privkey.pem
+        # Web server certificates.
+        certdir:=certs
 
     .. then run `make build`, `make run`, etc.
 
